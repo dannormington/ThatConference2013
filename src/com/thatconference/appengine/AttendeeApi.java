@@ -2,6 +2,7 @@ package com.thatconference.appengine;
 
 import com.google.api.server.spi.ServiceException;
 import com.google.api.server.spi.config.Api;
+import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 
@@ -14,6 +15,10 @@ import com.google.appengine.api.users.User;
 		)
 public class AttendeeApi {
 	
+	@ApiMethod(
+		httpMethod = "POST",
+		path = "register"
+	)
 	public AttendeeRegistrationResult register(User user) throws ServiceException{
 		
 		if(user == null)
