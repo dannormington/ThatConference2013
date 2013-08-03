@@ -31,14 +31,12 @@ public class AttendeeService {
 				
 				member = new Entity(memberKey);
 				member.setProperty("DateRegistered", new Date());
-				
-				datastoreService.put(transaction, member);
+				datastoreService.put(member);
+							
 				transaction.commit();
 				
 				return new AttendeeRegistrationResult();
-			}
-			
-			
+			}			
 		}catch (RuntimeException ex){
 			return new AttendeeRegistrationResult(ex.getMessage());
 		}finally{
