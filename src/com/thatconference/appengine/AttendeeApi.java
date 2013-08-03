@@ -28,5 +28,4 @@ public class AttendeeApi {
 		return service.register(user);
 		
 	}
-
 }

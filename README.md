@@ -1,4 +1,4 @@
 ThatConference
 ==============
 
-Sample Google App Engine Code
+Sample Google App Engine

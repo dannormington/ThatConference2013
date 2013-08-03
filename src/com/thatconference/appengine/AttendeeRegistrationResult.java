@@ -21,5 +21,4 @@ public class AttendeeRegistrationResult {
 	public String getError(){
 		return error;
 	}
-
 }

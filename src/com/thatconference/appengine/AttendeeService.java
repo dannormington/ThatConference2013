@@ -45,6 +45,5 @@ public class AttendeeService {
 			if(transaction != null && transaction.isActive())
 				transaction.rollback();
 		}
-		
 	}
 }
