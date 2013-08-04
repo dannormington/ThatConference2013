@@ -5,9 +5,10 @@ import java.util.Date;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.users.User;
 
@@ -20,23 +21,24 @@ public class AttendeeService {
 		
 		try{
 			
-			Key memberKey = KeyFactory.createKey("Member", user.getEmail());
-			Entity member = null;
-			
-			try {
-				member = datastoreService.get(memberKey);
-				return new AttendeeRegistrationResult(String.format("%s has already registered", user.getEmail()));
-				
-			} catch (EntityNotFoundException e) {
-				
-				member = new Entity(memberKey);
-				member.setProperty("DateRegistered", new Date());
-				datastoreService.put(member);
+			Key attendeeKey = KeyFactory.createKey("Attendee", user.getEmail());
+		
+			Query query = new Query("Attendee", attendeeKey);
+			PreparedQuery preparedQuery = datastoreService.prepare(query);
+			Entity attendee = preparedQuery.asSingleEntity();
+
+			if(attendee == null){
+				attendee = new Entity("Attendee", attendeeKey);
+				attendee.setProperty("DateRegistered", new Date());
+				datastoreService.put(attendee);
 							
 				transaction.commit();
 				
 				return new AttendeeRegistrationResult();
-			}			
+			}
+			
+			return new AttendeeRegistrationResult(String.format("%s has already registered", user.getEmail()));
+						
 		}catch (RuntimeException ex){
 			return new AttendeeRegistrationResult(ex.getMessage());
 		}finally{
