@@ -18,17 +18,17 @@ public class AttendeeService {
 		
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Transaction transaction = datastoreService.beginTransaction();
-		
+				
 		try{
 			
-			Key attendeeKey = KeyFactory.createKey("Attendee", user.getEmail());
+			Key userKey = KeyFactory.createKey("User", user.getEmail());
 		
-			Query query = new Query("Attendee", attendeeKey);
+			Query query = new Query("Attendee", userKey);
 			PreparedQuery preparedQuery = datastoreService.prepare(query);
 			Entity attendee = preparedQuery.asSingleEntity();
 
 			if(attendee == null){
-				attendee = new Entity("Attendee", attendeeKey);
+				attendee = new Entity("Attendee", userKey);
 				attendee.setProperty("DateRegistered", new Date());
 				datastoreService.put(attendee);
 							
