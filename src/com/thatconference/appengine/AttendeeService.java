@@ -14,7 +14,7 @@ import com.google.appengine.api.users.User;
 
 public class AttendeeService {
 
-	public AttendeeRegistrationResult register(User user){
+	public AttendeeRegistrationResult register(User user, String firstName, String lastName){
 		
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Transaction transaction = datastoreService.beginTransaction();
@@ -22,14 +22,20 @@ public class AttendeeService {
 		try{
 			
 			Key userKey = KeyFactory.createKey("User", user.getEmail());
-		
+					
 			Query query = new Query("Attendee", userKey);
 			PreparedQuery preparedQuery = datastoreService.prepare(query);
 			Entity attendee = preparedQuery.asSingleEntity();
 
 			if(attendee == null){
+				
+				Entity userEntity = new Entity("User",user.getEmail());
+				userEntity.setProperty("DateRegistered", new Date());
+				datastoreService.put(userEntity);
+				
 				attendee = new Entity("Attendee", userKey);
-				attendee.setProperty("DateRegistered", new Date());
+				attendee.setProperty("FirstName", firstName);
+				attendee.setProperty("LastName", lastName);
 				datastoreService.put(attendee);
 							
 				transaction.commit();

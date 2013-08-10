@@ -19,13 +19,14 @@ public class AttendeeApi {
 		httpMethod = "POST",
 		path = "register"
 	)
-	public AttendeeRegistrationResult register(User user) throws ServiceException{
+	public AttendeeRegistrationResult register(
+			RegisterAttendeeCommand command,
+			User user) throws ServiceException{
 		
 		if(user == null)
     		throw new UnauthorizedException("The user is not authorized.");	
 		
 		AttendeeService service = new AttendeeService();
-		return service.register(user);
-		
+		return service.register(user, command.getFirstName(), command.getLastName());
 	}
 }
