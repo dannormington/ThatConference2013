@@ -1,5 +1,7 @@
 package com.thatconference.appengine;
 
+import java.util.Date;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -28,6 +30,7 @@ public class AttendeeService {
 				attendee = new Entity("Attendee",user.getEmail());
 				attendee.setProperty("FirstName", firstName);
 				attendee.setProperty("LastName", lastName);
+				attendee.setProperty("DateRegistered", new Date());
 				datastoreService.put(attendee);
 				
 				transaction.commit();
