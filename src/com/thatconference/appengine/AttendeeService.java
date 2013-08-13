@@ -1,14 +1,11 @@
 package com.thatconference.appengine;
 
-import java.util.Date;
-
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.users.User;
 
@@ -21,29 +18,24 @@ public class AttendeeService {
 				
 		try{
 			
-			Key userKey = KeyFactory.createKey("User", user.getEmail());
-					
-			Query query = new Query("Attendee", userKey);
-			PreparedQuery preparedQuery = datastoreService.prepare(query);
-			Entity attendee = preparedQuery.asSingleEntity();
-
-			if(attendee == null){
+			Key attendeeKey = KeyFactory.createKey("Attendee", user.getEmail());
+			Entity attendee = null;
+			
+			try {
+				attendee = datastoreService.get(attendeeKey);
+			} catch (EntityNotFoundException e) {
 				
-				Entity userEntity = new Entity("User",user.getEmail());
-				userEntity.setProperty("DateRegistered", new Date());
-				datastoreService.put(userEntity);
-				
-				attendee = new Entity("Attendee", userKey);
+				attendee = new Entity("Attendee",user.getEmail());
 				attendee.setProperty("FirstName", firstName);
 				attendee.setProperty("LastName", lastName);
 				datastoreService.put(attendee);
-							
+				
 				transaction.commit();
 				
 				return new AttendeeRegistrationResult();
 			}
-			
-			return new AttendeeRegistrationResult(String.format("%s has already registered", user.getEmail()));
+
+			return new AttendeeRegistrationResult(String.format("%s has already registered", attendee.getKey().getName()));
 						
 		}catch (RuntimeException ex){
 			return new AttendeeRegistrationResult(ex.getMessage());
@@ -53,3 +45,4 @@ public class AttendeeService {
 		}
 	}
 }
+
